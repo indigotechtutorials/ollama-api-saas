@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  request_data: MyText
+  api_key: one
+
+two:
+  request_data: MyText
+  api_key: two

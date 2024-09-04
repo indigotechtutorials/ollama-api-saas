@@ -1,0 +1,55 @@
+<div class="w-full min-h-screen flex flex-col items-center pt-24 bg-gradient-to-br from-gray-900 to-indigo-900">
+  <h1 class="font-bold text-7xl text-white text-center">Your Dashboard</h1>
+  <p class="text-lg text-gray-200 max-w-md text-center">This is the place where you can manage all of your account settings </p>
+  <div class="max-w-7xl w-full p-4 rounded-lg bg-gray-700 min-h-[60vh] mt-8"> 
+    <div class="flex flex-col md:flex-row gap-8 md:gap-0 justify-between">
+      <div class="max-w-lg w-full mx-auto flex flex-col items-center"> 
+        <h2 class="text-3xl text-gray-200"> Endpoint URL </h2>
+        <div class="p-2 rounded-lg bg-gray-500 text-gray-200"> 
+          <%= api_v1_chat_messages_url %>
+        </div>
+      </div>
+
+      <div class="max-w-lg w-full mx-auto flex flex-col items-center"> 
+        <h2 class="text-3xl text-gray-200"> Example Request </h2>
+        <div class="p-2 rounded-lg bg-gray-500 text-gray-200"> 
+          curl --location <%= api_v1_chat_messages_url %> \
+              --form 'token="<%= current_user&.api_keys&.last&.token || "14c39132116a6ac66d8b403c39646a8b" %>"' \
+              --form 'prompt="Whats going on?"'
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 mt-4">
+      <div class="w-full flex flex-col gap-4 mt-8 md:mt-0">
+        <div class="flex items-center justify-between w-full md:w-3/4">
+          <h2 class="text-4xl text-gray-200"> Your API Keys </h2>
+          <%= link_to "Generate New API Key", generate_api_keys_path, class: "bg-green-500 p-2 rounded-lg text-green-100",
+              data: { turbo_method: :post } %>
+        </div>
+        <div id="api-keys" class="flex flex-col max-w-xl gap-4">
+          <%= render partial: "api_key", collection: current_user.api_keys %>
+        </div>
+      </div>
+
+      <div class="w-full flex flex-col gap-4 mt-8 md:mt-0"> 
+        <h3 class="text-4xl text-gray-200"> API Usage </h3>
+        <div class="bg-gray-500 rounded-lg text-gray-100 p-4"> 
+          Api Requests Count: <%= current_user.api_requests.count %>
+        </div>
+
+        <div class="bg-gray-500 rounded-lg text-gray-100 p-4"> 
+          AI Generations Count: <%= current_user.api_requests.where.not(ai_response: nil).count %>
+        </div>
+
+        <div class="bg-gray-500 rounded-lg text-gray-100 p-4"> 
+          Requests this month: <%= current_user.api_requests.where(created_at: Time.now.beginning_of_month..).count %>
+        </div>
+
+        <div class="bg-gray-500 rounded-lg text-gray-100 p-4"> 
+          Usage Cost: <%= number_to_currency(current_user.api_requests.where(created_at: Time.now.beginning_of_month..).count * API_REQUEST_PRICE) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
